@@ -22,6 +22,8 @@ type ListEntry struct {
 }
 
 func AppList(page string) (<-chan ListEntry, <-chan error) {
+	page = ensureHasLanguage(page)
+
 	resList := make(chan ListEntry)
 	resErr := make(chan error, 1)
 	go func() {
@@ -85,4 +87,18 @@ func unescapeHTML(raw string) string {
 		return raw
 	}
 	return scrape.Text(d)
+}
+
+func ensureHasLanguage(page string) string {
+	parsed, err := url.Parse(page)
+	if err != nil {
+		return page
+	}
+	if parsed.Query().Get("hl") == "" {
+		q := parsed.Query()
+		q.Set("hl", "en")
+		parsed.RawQuery = q.Encode()
+		return parsed.String()
+	}
+	return page
 }
