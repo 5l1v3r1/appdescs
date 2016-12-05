@@ -27,7 +27,13 @@ func main() {
 
 	playURL := os.Args[1]
 	listing, errChan := AppList(playURL)
+	seenIDs := map[string]bool{}
 	for item := range listing {
+		if seenIDs[item.AppID] {
+			log.Println("Saw duplicate app:", item.Name, "("+item.AppID+")")
+			return
+		}
+		seenIDs[item.AppID] = true
 		destPath := filepath.Join(os.Args[2], item.AppID+".html")
 		if _, err := os.Stat(destPath); err == nil {
 			log.Println("Already have", item.Name, "("+item.AppID+")")

@@ -26,4 +26,4 @@ Finally, to run the command, you will need to pick an apps list page and an outp
 $ go run *.go https://play.google.com/store/apps/collection/topselling_free?hl=en out_dir
 ```
 
-This will run until you terminate it or it runs out of apps (most likely the former).
+This will run until there are no more results.
