@@ -65,7 +65,6 @@ func loadListing(idx int, page string) ([]ListEntry, error) {
 		return nil, errors.New("request list page: " + err.Error())
 	}
 	body, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
 	if err != nil {
 		return nil, errors.New("read list page: " + err.Error())
 	}
