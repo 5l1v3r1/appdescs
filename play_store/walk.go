@@ -3,9 +3,11 @@ package main
 import (
 	"errors"
 	"math/rand"
+	"time"
 )
 
 func RandomWalk(startPage string) (<-chan ListEntry, <-chan error) {
+	rand.Seed(time.Now().UnixNano())
 	errChan := make(chan error, 1)
 	resChan := make(chan ListEntry, 1)
 	go func() {
