@@ -14,15 +14,11 @@ func main() {
 		fmt.Fprintln(os.Stderr)
 		fmt.Fprintln(os.Stderr, "Available commands:")
 		fmt.Fprintln(os.Stderr, " fetch <play_url> <out_dir>")
-		fmt.Fprintln(os.Stderr, " walk <app_id> <out_dir>")
+		fmt.Fprintln(os.Stderr, " walk <play_url> <out_dir>")
 		fmt.Fprintln(os.Stderr)
 		fmt.Fprintln(os.Stderr, "\nThe play_url argument specifies a page of apps, such as")
 		fmt.Fprintln(os.Stderr,
 			"https://play.google.com/store/apps/collection/topselling_free?hl=en")
-		fmt.Fprintln(os.Stderr)
-		fmt.Fprintln(os.Stderr, "\nThe app_id argument specifies an app ID, like")
-		fmt.Fprintln(os.Stderr,
-			"com.snapchat.android")
 		fmt.Fprintln(os.Stderr)
 		os.Exit(1)
 	}
