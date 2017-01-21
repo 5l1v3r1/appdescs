@@ -30,6 +30,7 @@ func AppList(page string) (<-chan ListEntry, <-chan error) {
 		defer close(resList)
 		defer close(resErr)
 		var idx int
+		seenIDs := map[string]bool{}
 		for {
 			listing, err := loadListing(idx, page)
 			if err != nil {
@@ -37,9 +38,13 @@ func AppList(page string) (<-chan ListEntry, <-chan error) {
 				return
 			}
 			if len(listing) == 0 {
-				break
+				return
 			}
 			for _, x := range listing {
+				if seenIDs[x.AppID] {
+					return
+				}
+				seenIDs[x.AppID] = true
 				resList <- x
 			}
 			idx += len(listing)

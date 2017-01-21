@@ -9,32 +9,57 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 3 {
-		fmt.Fprintln(os.Stderr, "Usage:", os.Args[0], "play_url out_dir")
+	if len(os.Args) != 4 {
+		fmt.Fprintln(os.Stderr, "Usage:", os.Args[0], "cmd args...")
+		fmt.Fprintln(os.Stderr)
+		fmt.Fprintln(os.Stderr, "Available commands:")
+		fmt.Fprintln(os.Stderr, " fetch <play_url> <out_dir>")
+		fmt.Fprintln(os.Stderr, " walk <app_id> <out_dir>")
+		fmt.Fprintln(os.Stderr)
 		fmt.Fprintln(os.Stderr, "\nThe play_url argument specifies a page of apps, such as")
 		fmt.Fprintln(os.Stderr,
 			"https://play.google.com/store/apps/collection/topselling_free?hl=en")
 		fmt.Fprintln(os.Stderr)
+		fmt.Fprintln(os.Stderr, "\nThe app_id argument specifies an app ID, like")
+		fmt.Fprintln(os.Stderr,
+			"com.snapchat.android")
+		fmt.Fprintln(os.Stderr)
 		os.Exit(1)
 	}
 
-	if _, err := os.Stat(os.Args[2]); os.IsNotExist(err) {
-		if err := os.Mkdir(os.Args[2], 0755); err != nil {
+	if _, err := os.Stat(os.Args[3]); os.IsNotExist(err) {
+		if err := os.Mkdir(os.Args[3], 0755); err != nil {
 			fmt.Fprintln(os.Stderr, "Create out dir:", err)
 			os.Exit(1)
 		}
 	}
 
-	playURL := os.Args[1]
+	if os.Args[1] == "fetch" {
+		fetchCommand()
+	} else if os.Args[1] == "walk" {
+		walkCommand()
+	} else {
+		fmt.Fprintln(os.Stderr, "Unrecognized command:", os.Args[1])
+	}
+}
+
+func fetchCommand() {
+	playURL := os.Args[2]
 	listing, errChan := AppList(playURL)
+	dumpListing(listing, errChan)
+}
+
+func walkCommand() {
+	startID := os.Args[2]
+	listing, errChan := RandomWalk(startID)
+	dumpListing(listing, errChan)
+}
+
+func dumpListing(listing <-chan ListEntry, errChan <-chan error) {
 	seenIDs := map[string]bool{}
 	for item := range listing {
-		if seenIDs[item.AppID] {
-			log.Println("Saw duplicate app:", item.Name, "("+item.AppID+")")
-			return
-		}
 		seenIDs[item.AppID] = true
-		destPath := filepath.Join(os.Args[2], item.AppID+".html")
+		destPath := filepath.Join(os.Args[3], item.AppID+".html")
 		if _, err := os.Stat(destPath); err == nil {
 			log.Println("Already have", item.Name, "("+item.AppID+")")
 			continue
