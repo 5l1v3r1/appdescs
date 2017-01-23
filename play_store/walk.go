@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"math/rand"
 	"time"
 )
@@ -39,8 +38,8 @@ func RandomWalk(startPage string) (<-chan ListEntry, <-chan error) {
 				return
 			}
 			if len(similar) == 0 {
-				errChan <- errors.New("no similar apps")
-				return
+				id = seenList[rand.Intn(len(seenList))]
+				continue
 			}
 			item := similar[rand.Intn(len(similar))]
 			resChan <- item
